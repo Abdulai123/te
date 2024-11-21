@@ -5,7 +5,7 @@ RunAsDaemon 1
 
 HiddenServiceDir /etc/tor/hidden_service
 HiddenServicePort 80 unix:/var/run/nginx1
-HiddenServiceMaxStreams 10
+HiddenServiceMaxStreams streamratelimitvalue
 HiddenServiceMaxStreamsCloseCircuit 1
 HiddenServiceNumIntroductionPoints 3
 HiddenServiceExportCircuitID haproxy

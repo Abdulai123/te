@@ -106,4 +106,3 @@ Libraries:
 * [LUA Resty Cookie](https://github.com/cloudflare/lua-resty-cookie) - Provides cookie manipulation
 * [LUA Resty Session](https://github.com/bungle/lua-resty-session) - Provides session manipulation
 * [LUA Resty AES](https://github.com/c64bob/lua-resty-aes/raw/master/lib/resty/aes_functions.lua) - AES Functions file for LUA. Used for shared session cookies.
-# te

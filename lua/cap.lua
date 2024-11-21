@@ -6,10 +6,10 @@ random = require "resty.random"
 sha256 = require "resty.sha256"
 
 -- encryption key and salt must be shared across fronts. salt must be 8 chars. Key is not used anymore just kept for reference.
--- local key = "T2sV8g6wLzInA6s7FZvOqHsa6wNU0RuYbSklTH9g8aGQxS5vg=="
-local salt = "T2sV8g6w"
+-- local key = "encryption_key"
+local salt = "salt1234"
 -- for how long the captcha is valid. 120 sec is for testing, 3600 1 hour should be production.
-local session_timeout = 43200
+local session_timeout = sessionconfigvalue
 
 -- needed for reading the master key
 function fromhex(hex_str)
@@ -29,7 +29,7 @@ end
 -- openssl kdf -keylen 32 -kdfopt digest:SHA256 -kdfopt pass:$KEY -kdfopt salt:$SALT -kdfopt iter:2000000 PBKDF2 | sed s/://g
 -- OPENSSL 1.1.1n:
 -- openssl enc -aes-256-cbc -pbkdf2 -pass pass:$KEY -S $SALT_HEX -iter 2000000 -md sha256 -P | grep "key" | sed s/key=//g
-local master_key = fromhex("89FF38E641954D00ED311062E11308D6F23489633469C040DFD37686B069B21F")
+local master_key = fromhex("masterkeymasterkeymasterkey")
 
 b = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 
