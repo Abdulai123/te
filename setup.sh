@@ -237,7 +237,12 @@ fi
 cd ..
 
 apt update
-apt install -y -q nginx build-essential zlib1g-dev libpcre3 libpcre3-dev uuid-dev gcc git wget curl libpcre2-dev libpcre2-dev
+apt install -y -q lua5.1 nginx build-essential zlib1g-dev libpcre3 libpcre3-dev uuid-dev gcc git wget curl libpcre2-dev libpcre2-dev
+
+mkdir -p /etc/tor
+
+useradd -r -M debian-tor
+touch /etc/tor/torrc
 
 if $TORSETUP || $LOCALPROXY; then
   apt install -y -q tor nyx socat deb.torproject.org-keyring
