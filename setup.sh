@@ -208,12 +208,14 @@ fi
 apt update
 apt install -y -q apt-transport-https lsb-release ca-certificates
 
-echo "deb [signed-by=/etc/apt/trusted.gpg.d/nginx.gpg] https://nginx.org/packages/$DIST/ $RELEASE nginx" > /etc/apt/sources.list.d/nginx.list
+curl https://nginx.org/keys/nginx_signing.key | sudo gpg --dearmor -o /usr/share/keyrings/nginx-archive-keyring.gpg
+
+echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://nginx.org/packages/debian/ bookworm nginx" > /etc/apt/sources.list.d/nginx.list
 
 cd repokeys
 
 #Main Nginx Repo key. You can get it at https://nginx.org/keys/nginx_signing.key. Expires on June 14 2024.
-mv nginx.gpg /etc/apt/trusted.gpg.d/nginx.gpg
+#mv nginx.gpg /etc/apt/trusted.gpg.d/nginx.gpg
 
 if $TORSETUP || $LOCALPROXY; then
   echo "deb [signed-by=/usr/share/keyrings/tor-project.gpg] https://deb.torproject.org/torproject.org $RELEASE main" > /etc/apt/sources.list.d/tor.list
@@ -272,7 +274,7 @@ echo "LD_LIBRARY_PATH=/usr/local/lib" >> /etc/environment
 #Just in case the user is not using root
 echo "export LD_LIBRARY_PATH=/usr/local/lib" >> ~/.bashrc
 
-mkdir building
+mkdir -p building
 cp -R dependencies/* building
 cd building
 
@@ -288,13 +290,13 @@ cd lua-resty-cookie
 make install
 cd ..
 
-mkdir /usr/local/share/lua/5.1/resty/
+mkdir -p /usr/local/share/lua/5.1/resty/
 cp -a lua-resty-session/lib/resty/* /usr/local/share/lua/5.1/resty/
 
 cd ..
 
 rm -R /etc/nginx/resty/
-mkdir /etc/nginx/resty/
+mkdir -p /etc/nginx/resty/
 ln -s /usr/local/share/lua/5.1/resty/ /etc/nginx/resty/
 
 tar zxf resty.tgz -C /usr/local/share/lua/5.1/resty
@@ -307,7 +309,7 @@ mv naxsi_whitelist.rules /etc/nginx/naxsi_whitelist.rules
 rm -R /etc/nginx/lua
 mv lua /etc/nginx/
 mv resty/* /etc/nginx/resty/
-mkdir /etc/nginx/sites-enabled/
+mkdir -p /etc/nginx/sites-enabled/
 mv site.conf /etc/nginx/sites-enabled/site.conf
 
 chown -R www-data:www-data /etc/nginx/
@@ -475,10 +477,10 @@ fi
 cd /etc/nginx/resty/ && ./captcha
 
 rm -R /var/log/nginx/
-mkdir /var/log/nginx/
+mkdir -p /var/log/nginx/
 chown www-data:www-data /var/log/nginx
 
-mkdir /etc/nginx/cache/
+mkdir -p /etc/nginx/cache/
 chown -R www-data:www-data /usr/local/share/lua/5.1/
 chown -R www-data:www-data /etc/nginx/
 

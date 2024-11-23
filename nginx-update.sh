@@ -10,7 +10,7 @@ NGINXVERSION=$(echo $nginxv | grep -o '[0-9.]*$')
 modulecache=$NGINXVERSION-modules.tar.gz
 if test -f $modulecache; then
     rm -R /etc/nginx/modules
-    mkdir /etc/nginx/modules
+    mkdir -p /etc/nginx/modules
     tar zxvf $modulecache
     mv modules /etc/nginx/modules/
     nginx -t
@@ -33,17 +33,17 @@ export LUAJIT_INC=/usr/local/include/luajit-2.1
 ./configure \
 --with-ld-opt="-Wl,-rpath,/usr/local/libm,-lpcre" \
 --with-compat \
---add-dynamic-module=naxsi/naxsi_src \
---add-dynamic-module=headers-more-nginx-module \
---add-dynamic-module=echo-nginx-module \
---add-dynamic-module=ngx_devel_kit \
---add-dynamic-module=lua-nginx-module
+--add-dynamic-module=./naxsi/naxsi_src \
+--add-dynamic-module=./headers-more-nginx-module \
+--add-dynamic-module=./echo-nginx-module \
+--add-dynamic-module=./ngx_devel_kit \
+--add-dynamic-module=./lua-nginx-module
 
 make -j8 modules
 
 cp -r objs modules
 rm -R /etc/nginx/modules
-mkdir /etc/nginx/modules
+mkdir -p /etc/nginx/modules
 tar -zcvf $modulecache modules
 mv modules /etc/nginx/modules
 
