@@ -206,16 +206,13 @@ else
 fi
 
 apt update
-apt install -y -q apt-transport-https lsb-release ca-certificates
+apt install -y -q curl apt-transport-https lsb-release ca-certificates software-properties-common
 
-curl https://nginx.org/keys/nginx_signing.key | sudo gpg --dearmor -o /usr/share/keyrings/nginx-archive-keyring.gpg
+curl -fsSL https://nginx.org/keys/nginx_signing.key | sudo tee /etc/apt/trusted.gpg.d/nginx.asc
 
-echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://nginx.org/packages/debian/ bookworm nginx" > /etc/apt/sources.list.d/nginx.list
+echo "deb http://nginx.org/packages/mainline/debian/ bookworm nginx" | sudo tee /etc/apt/sources.list.d/nginx.list
 
-cd repokeys
-
-#Main Nginx Repo key. You can get it at https://nginx.org/keys/nginx_signing.key. Expires on June 14 2024.
-#mv nginx.gpg /etc/apt/trusted.gpg.d/nginx.gpg
+cd respokeys
 
 if $TORSETUP || $LOCALPROXY; then
   echo "deb [signed-by=/usr/share/keyrings/tor-project.gpg] https://deb.torproject.org/torproject.org $RELEASE main" > /etc/apt/sources.list.d/tor.list
@@ -226,7 +223,7 @@ if $TORSETUP || $LOCALPROXY; then
   #echo "deb-src [signed-by=/usr/share/keyrings/tor-project.gpg] https://deb.torproject.org/torproject.org tor-nightly-main-$RELEASE main" >> /etc/apt/sources.list.d/tor.list
 
   #Main Tor-Project Repo key. You can get it at https://deb.torproject.org/torproject.org/A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89.asc. Autoupdated via the deb.torproject.org-keyring package
-  mv tor-project.gpg /usr/share/keyrings/tor-project.gpg
+  mv tor-project.gpg /usr/share/keyrings/tor-archive-keyring.gpg
 fi
 
 if $I2PSETUP; then
@@ -300,6 +297,15 @@ mkdir -p /etc/nginx/resty/
 ln -s /usr/local/share/lua/5.1/resty/ /etc/nginx/resty/
 
 tar zxf resty.tgz -C /usr/local/share/lua/5.1/resty
+
+# Add Ondrej's repo source and signing key along with dependencies
+curl -sSLo /usr/share/keyrings/deb.sury.org-php.gpg https://packages.sury.org/php/apt.gpg
+sh -c 'echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
+apt update
+
+# Install new PHP 8.3 packages
+sudo apt install -y -q mysql php8.3 gnupg php8.3-cli php8.3-{bz2,curl,mbstring,intl,fpm,mysql,xml,zip,,json,soap,bcmath,gnupg,gd,tokenizer,session,pdo,pcre,openssl,hash,filter,fileinfo,dom,ctype}
+
 
 ./nginx-update.sh
 
@@ -483,6 +489,7 @@ chown www-data:www-data /var/log/nginx
 mkdir -p /etc/nginx/cache/
 chown -R www-data:www-data /usr/local/share/lua/5.1/
 chown -R www-data:www-data /etc/nginx/
+
 
 systemctl start nginx.service
 systemctl start endgame.service
